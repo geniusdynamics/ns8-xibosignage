@@ -6,7 +6,7 @@
 [Unit]
 Description=Podman  xibosignage-app.service
 BindsTo=xibosignage.service
-After=xibosignage.service mariadb-app.service
+After=xibosignage.service mariadb-app.service memcached-app.service quickchart-app.service xibosignage-xmr.service
 
 [Service]
 Environment=PODMAN_SYSTEMD_UNIT=%n

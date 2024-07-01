@@ -10,8 +10,8 @@
 
 [Unit]
 Description=Podman xibosignage.service
-Requires=mariadb-app.service xibosignage-app.service
-Before=mariadb-app.service xibosignage-app.service
+Requires=mariadb-app.service memcached-app.service quickchart-app.service xibosignage-xmr.service xibosignage-app.service
+Before=mariadb-app.service memcached-app.service quickchart-app.service xibosignage-xmr.service xibosignage-app.service
 
 [Service]
 Environment=PODMAN_SYSTEMD_UNIT=%n
