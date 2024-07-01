@@ -1,0 +1,33 @@
+#
+# Copyright (C) 2022 Nethesis S.r.l.
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+
+[Unit]
+Description=Podman  xibosignage-xmr.service
+BindsTo=xibosignage.service
+After=xibosignage.service mariadb-app.service
+
+[Service]
+Environment=PODMAN_SYSTEMD_UNIT=%n
+EnvironmentFile=%S/state/environment
+EnvironmentFile=-%S/state/smarthost.env
+WorkingDirectory=%S/state
+Restart=always
+TimeoutStopSec=70
+ExecStartPre=/bin/mkdir -p tmp
+ExecStartPre=/bin/rm -f %t/xibosignage-xmr.pid %t/xibosignage-xmr.ctr-id
+ExecStartPre=-runagent discover-smarthost
+ExecStart=/usr/bin/podman run --conmon-pidfile %t/xibosignage-xmr.pid \
+    --cidfile %t/xibosignage-xmr.ctr-id --cgroups=no-conmon \
+    --pod-id-file %t/xibosignage.pod-id --replace -d --name  xibosignage-xmr \
+    ${XIBO_XMR_IMAGE}
+ExecStop=/usr/bin/podman stop --ignore --cidfile %t/xibosignage-xmr.ctr-id -t 10
+ExecReload=/usr/bin/podman kill -s HUP xibosignage-xmr
+SyslogIdentifier=%u
+ExecStopPost=/usr/bin/podman rm --ignore -f --cidfile %t/xibosignage-xmr.ctr-id
+PIDFile=%t/xibosignage-xmr.pid
+Type=forking
+
+[Install]
+WantedBy=default.target
