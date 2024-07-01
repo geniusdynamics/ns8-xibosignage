@@ -1,0 +1,40 @@
+#
+# Copyright (C) 2022 Nethesis S.r.l.
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+
+[Unit]
+Description=Podman  xibosignage-app.service
+BindsTo=xibosignage.service
+After=xibosignage.service mariadb-app.service
+
+[Service]
+Environment=PODMAN_SYSTEMD_UNIT=%n
+EnvironmentFile=%S/state/environment
+EnvironmentFile=-%S/state/smarthost.env
+WorkingDirectory=%S/state
+Restart=always
+TimeoutStopSec=70
+ExecStartPre=/bin/mkdir -p tmp
+ExecStartPre=/bin/rm -f %t/xibosignage-app.pid %t/xibosignage-app.ctr-id
+ExecStartPre=-runagent discover-smarthost
+ExecStart=/usr/bin/podman run --conmon-pidfile %t/xibosignage-app.pid \
+    --cidfile %t/xibosignage-app.ctr-id --cgroups=no-conmon \
+    --pod-id-file %t/xibosignage.pod-id --replace -d --name  xibosignage-app \
+    --volume ./shared/cms/custom:/var/www/cms/custom:Z \
+    --volume ./shared/backup:/var/www/backup:Z \
+    --volume ./shared/cms/web/theme/custom:/var/www/cms/web/theme/custom:Z \
+    --volume ./shared/cms/library:/var/www/cms/library:Z \
+    --volume ./shared/cms/web/userscripts:/var/www/cms/web/userscripts:Z \
+    --volume ./shared/cms/ca-certs:/var/www/cms/ca-certs:Z \
+    --env-file=%S/state/app.env \
+    ${XIBO_CMS_IMAGE}
+ExecStop=/usr/bin/podman stop --ignore --cidfile %t/xibosignage-app.ctr-id -t 10
+ExecReload=/usr/bin/podman kill -s HUP xibosignage-app
+SyslogIdentifier=%u
+ExecStopPost=/usr/bin/podman rm --ignore -f --cidfile %t/xibosignage-app.ctr-id
+PIDFile=%t/xibosignage-app.pid
+Type=forking
+
+[Install]
+WantedBy=default.target

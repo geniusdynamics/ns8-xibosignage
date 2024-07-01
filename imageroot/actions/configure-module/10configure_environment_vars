@@ -30,4 +30,20 @@ mariadb = {
 }
 agent.write_envfile("database.env", mariadb)
 
+# App Variables
+# MYSQL_HOST=cms-db
+# - XMR_HOST=cms-xmr
+# - CMS_USE_MEMCACHED=true
+# - MEMCACHED_HOST=cms-memcached
+app_config = {
+    "MYSQL_HOST": "mariadb-app",
+    "MYSQL_DATABASE": MARIADB_DATABASE,
+    "MYSQL_USER": MARIADB_USER,
+    "MYSQL_PASSWORD": MARIADB_PASSWORD,
+    "MYSQL_PORT": "3306",
+    "XMR_HOST": "xibosignage-xmr",
+    "CMS_USE_MEMCACHED": "true",
+    "MEMCACHED_HOST": "memcached-app",
+}
+agent.write_envfile("app.env", app_config)
 #agent.dump_env()
