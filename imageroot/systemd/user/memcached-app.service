@@ -1,0 +1,33 @@
+#
+# Copyright (C) 2022 Nethesis S.r.l.
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+
+[Unit]
+Description=Podman  memcached-app.service
+BindsTo=xibosignage.service
+After=xibosignage.service mariadb-app.service
+
+[Service]
+Environment=PODMAN_SYSTEMD_UNIT=%n
+EnvironmentFile=%S/state/environment
+EnvironmentFile=-%S/state/smarthost.env
+WorkingDirectory=%S/state
+Restart=always
+TimeoutStopSec=70
+ExecStartPre=/bin/mkdir -p tmp
+ExecStartPre=/bin/rm -f %t/memcached-app.pid %t/memcached-app.ctr-id
+ExecStartPre=-runagent discover-smarthost
+ExecStart=/usr/bin/podman run --conmon-pidfile %t/memcached-app.pid \
+    --cidfile %t/memcached-app.ctr-id --cgroups=no-conmon \
+    --pod-id-file %t/xibosignage.pod-id --replace -d --name  memcached-app \
+    ${MEMCACHED_IMAGE} memcached -m 15
+ExecStop=/usr/bin/podman stop --ignore --cidfile %t/memcached-app.ctr-id -t 10
+ExecReload=/usr/bin/podman kill -s HUP memcached-app
+SyslogIdentifier=%u
+ExecStopPost=/usr/bin/podman rm --ignore -f --cidfile %t/memcached-app.ctr-id
+PIDFile=%t/memcached-app.pid
+Type=forking
+
+[Install]
+WantedBy=default.target
