@@ -45,7 +45,7 @@ buildah config --entrypoint=/ \
     --label="org.nethserver.authorizations=traefik@node:routeadm" \
     --label="org.nethserver.tcp-ports-demand=1" \
     --label="org.nethserver.rootfull=0" \
-    --label="org.nethserver.images=docker.io/mariadb:10.11.5 ghcr.io/xibosignage/xibo-xmr:0.11 ghcr.io/xibosignage/xibo-cms:release-4.0.12 docker.io/memcached:alpine docker.io/ianw/quickchart:latest" \
+    --label="org.nethserver.images=docker.io/mariadb:10.11.5 ghcr.io/xibosignage/xibo-xmr:0.11 ghcr.io/xibosignage/xibo-cms:release-4.0.13 docker.io/memcached:alpine docker.io/ianw/quickchart:latest" \
     "${container}"
 # Commit the image
 buildah commit "${container}" "${repobase}/${reponame}"
