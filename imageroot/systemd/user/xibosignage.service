@@ -15,7 +15,7 @@ Before=mariadb-app.service memcached-app.service quickchart-app.service xibosign
 
 [Service]
 Environment=PODMAN_SYSTEMD_UNIT=%n
-EnvironmentFile=-%S/state/environment
+EnvironmentFile=-%E/state/environment
 Restart=always
 TimeoutStopSec=70
 ExecStartPre=/bin/rm -f %t/xibosignage.pid %t/xibosignage.pod-id
