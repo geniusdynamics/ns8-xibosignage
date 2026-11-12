@@ -10,15 +10,15 @@ After=xibosignage.service
 
 [Service]
 Environment=PODMAN_SYSTEMD_UNIT=%n
-EnvironmentFile=%S/state/environment
-EnvironmentFile=%S/state/database.env
+EnvironmentFile=%E/state/environment
+EnvironmentFile=%E/state/database.env
 Restart=always
 TimeoutStopSec=70
 ExecStartPre=/bin/rm -f %t/mariadb-app.pid %t/mariadb-app.ctr-id
 ExecStart=/usr/bin/podman run --conmon-pidfile %t/mariadb-app.pid \
     --cidfile %t/mariadb-app.ctr-id --cgroups=no-conmon \
     --pod-id-file %t/xibosignage.pod-id --replace -d --name mariadb-app \
-    --env-file=%S/state/database.env \
+    --env-file=%E/state/database.env \
     --volume mysql-data:/var/lib/mysql/:Z \
     ${MARIADB_IMAGE} \
     --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci

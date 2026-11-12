@@ -10,14 +10,12 @@ After=xibosignage.service mariadb-app.service
 
 [Service]
 Environment=PODMAN_SYSTEMD_UNIT=%n
-EnvironmentFile=%S/state/environment
-EnvironmentFile=-%S/state/smarthost.env
-WorkingDirectory=%S/state
+EnvironmentFile=%E/state/environment
+WorkingDirectory=%E/state
 Restart=always
 TimeoutStopSec=70
 ExecStartPre=/bin/mkdir -p tmp
 ExecStartPre=/bin/rm -f %t/memcached-app.pid %t/memcached-app.ctr-id
-ExecStartPre=-runagent discover-smarthost
 ExecStart=/usr/bin/podman run --conmon-pidfile %t/memcached-app.pid \
     --cidfile %t/memcached-app.ctr-id --cgroups=no-conmon \
     --pod-id-file %t/xibosignage.pod-id --replace -d --name  memcached-app \
