@@ -1,9 +1,12 @@
 {
   "name": "xibosignage",
   "description": {
-    "en": "My xibosignage module"
+    "en": "Xibo is an open source digital signage platform to schedule and publish content to screens from a web CMS.",
+    "it": "Xibo è una piattaforma open source di digital signage per pianificare e pubblicare contenuti sugli schermi da un CMS web."
   },
-  "categories": [],
+  "categories": [
+    "multimedia"
+  ],
   "authors": [
     {
       "name": "Genius Dynamics",
