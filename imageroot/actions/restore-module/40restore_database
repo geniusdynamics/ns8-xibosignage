@@ -14,7 +14,7 @@ mv -v xibosignage.sql initdb.d
 #do the bash file to restore and exit once done
 cat - >initdb.d/zz_xibosignage_restore.sh <<'EOS'
 # Print additional information:
-mariadb --version
+mysql --version
 # The script is sourced, override entrypoint args and exit:
 set -- true
 docker_temp_server_stop
@@ -33,9 +33,6 @@ podman run \
   --network=none \
   --volume=./initdb.d:/docker-entrypoint-initdb.d:z \
   --volume mysql-data:/var/lib/mysql/:Z \
-  --env MARIADB_ROOT_PASSWORD=Nethesis,1234 \
-  --env MARIADB_DATABASE=xibosignage \
-  --env MARIADB_USER=xibosignage \
-  --env MARIADB_PASSWORD=xibosignage \
+  --env-file=database.env \
   --replace --name=restore_db \
-  ${MARIADB_IMAGE}
+  "${MYSQL_IMAGE}"
