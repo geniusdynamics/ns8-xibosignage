@@ -6,6 +6,7 @@
 #
 
 import json
+import os
 import sys
 import agent
 
@@ -29,21 +30,25 @@ mariadb = {
     "MYSQL_PASSWORD": MARIADB_PASSWORD,
 }
 agent.write_envfile("database.env", mariadb)
+os.chmod("database.env", 0o600)
 
 # App Variables
 # MYSQL_HOST=cms-db
 # - XMR_HOST=cms-xmr
 # - CMS_USE_MEMCACHED=true
 # - MEMCACHED_HOST=cms-memcached
+# The containers share the pod network: reach them on 127.0.0.1, container
+# names resolve only while the container runs
 app_config = {
-    "MYSQL_HOST": "mariadb-app",
+    "MYSQL_HOST": "127.0.0.1",
     "MYSQL_DATABASE": MARIADB_DATABASE,
     "MYSQL_USER": MARIADB_USER,
     "MYSQL_PASSWORD": MARIADB_PASSWORD,
     "MYSQL_PORT": "3306",
-    "XMR_HOST": "xibosignage-xmr",
+    "XMR_HOST": "127.0.0.1",
     "CMS_USE_MEMCACHED": "true",
-    "MEMCACHED_HOST": "memcached-app",
+    "MEMCACHED_HOST": "127.0.0.1",
 }
 agent.write_envfile("app.env", app_config)
+os.chmod("app.env", 0o600)
 #agent.dump_env()

@@ -4,7 +4,7 @@
 #
 
 [Unit]
-Description=Podman mariadb-app.service
+Description=Podman mariadb-app.service (MySQL 8.4, as in the Xibo Docker setup)
 BindsTo=xibosignage.service
 After=xibosignage.service
 
@@ -13,6 +13,7 @@ Environment=PODMAN_SYSTEMD_UNIT=%n
 EnvironmentFile=%E/state/environment
 EnvironmentFile=%E/state/database.env
 Restart=always
+RestartSec=10
 TimeoutStopSec=70
 ExecStartPre=/bin/rm -f %t/mariadb-app.pid %t/mariadb-app.ctr-id
 ExecStart=/usr/bin/podman run --conmon-pidfile %t/mariadb-app.pid \
@@ -20,7 +21,7 @@ ExecStart=/usr/bin/podman run --conmon-pidfile %t/mariadb-app.pid \
     --pod-id-file %t/xibosignage.pod-id --replace -d --name mariadb-app \
     --env-file=%E/state/database.env \
     --volume mysql-data:/var/lib/mysql/:Z \
-    ${MARIADB_IMAGE} \
+    ${MYSQL_IMAGE} \
     --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
 ExecStartPost=/usr/bin/podman exec  mariadb-app /bin/bash -c 'printf "[client] \npassword=${MYSQL_PASSWORD}" > /root/.my.cnf'
 ExecStartPost=/usr/bin/podman exec mariadb-app /bin/bash -c "while ! mysqladmin ping -h localhost -P 3306 -u root; do sleep 1; done"
